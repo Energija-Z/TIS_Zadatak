@@ -73,7 +73,6 @@ public class Controller {
     
     @GetMapping(path = "/addReview")
     public String addReview(@RequestParam String name, @RequestParam int productId, @RequestParam String review, @RequestParam int rating){
-        //System.out.println(n * Double.parseDouble(getHTML("https://api.hnb.hr/tecajn-eur/v3?valuta=USD")));
         String returnVal = "";
         try{
             Class.forName("org.h2.Driver");
@@ -106,11 +105,12 @@ public class Controller {
             ResultSet redak = st.executeQuery(upit);
 
             JSONObject jsObject;
-            JSONArray jsArray = new JSONArray();            
+            JSONArray jsArray = new JSONArray();
+            String formatting = "%.1f";
 
             while(redak.next()){
                 jsObject = new JSONObject();
-                jsObject.put("averageRating", (redak.getString("average")));//"%.1f".format(redak.getString("ave")));
+                jsObject.put("averageRating", String.format(formatting, Float.parseFloat(redak.getString("average"))));
                 jsObject.put("name", redak.getString("name"));
                 jsArray.put(jsObject);
             }
@@ -120,10 +120,10 @@ public class Controller {
             returnVal = jsObject.toString();
         }
         catch (SQLException ex) {
-            returnVal = "Executing query has failed!";
+            System.out.println("Executing query has failed!");
         }
         catch (ClassNotFoundException ex) {
-            returnVal = "Connecting to database has failed!";
+            System.out.println("Connecting to database has failed!");
         }
         finally { return returnVal; }
     }
